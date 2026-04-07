@@ -1,0 +1,5 @@
+@import 'tailwindcss';
+
+.picked-card-container{
+    @apply flex flex-row w-3/4 gap-2 justify-center self-center py-10
+}
