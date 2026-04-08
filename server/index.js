@@ -58,6 +58,7 @@ io.on('connection', (socket) => {
     });
     room.players = updated;
     room.votes = [];
+    room.revealed = false;
     io.to(roomId).emit('update_room', room)
   })
 
