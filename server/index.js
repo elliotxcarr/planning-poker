@@ -51,9 +51,13 @@ io.on('connection', (socket) => {
   socket.on('reset', ({roomId}) => {
     const room = rooms.get(roomId);
     if(!room) return;
-
-    const updated = room.players.map(p => p.vote = null);
+    if(room.players.every(a => a.vote === null)) return;
+    const updated = room.players.map(p => {
+      p.vote = null;
+      return p;
+    });
     room.players = updated;
+    room.votes = [];
     io.to(roomId).emit('update_room', room)
   })
 
@@ -62,7 +66,6 @@ io.on('connection', (socket) => {
       const room = rooms.get(roomId);
       if(!room) return;
       room.players = room.players.filter(p => p.socketId !== socket.id);
-      console.log(room.players)
       io.to(roomId).emit('update_room', room)
     })
   })

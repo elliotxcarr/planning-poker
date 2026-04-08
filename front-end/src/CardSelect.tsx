@@ -1,25 +1,21 @@
-import { useState } from "react";
 import { Card } from "./Card";
 
 export const CardSelect = ({
   setPicked,
+  picked,
 }: {
   setPicked: (value: number) => void;
+  picked: number | null,
 }) => {
-    const numbers: number[] = [1, 2, 3, 4, 5];
-    const [selectedNum, setSelectedNum] = useState<number | null>(null);
-    const numberPicked = (num:number) => {
-        setSelectedNum(num);
-        setPicked(num)
-    }
+    const numbers: number[] = [1, 2, 3, 5, 8];
     return (
         <div className=" flex flex-row justify-around w-2/4">
         {numbers.map((a) => (
             <Card
             number={a}
-            click={() => numberPicked(a)}
-            isSelected={selectedNum === a}
-            hasVoted={!!selectedNum}
+            click={() => setPicked(a)}
+            isSelected={picked === a}
+            hasVoted={!!picked}
             ></Card>
         ))}
         </div>
