@@ -14,19 +14,34 @@ const rooms = new Map();
 io.on('connection', (socket) => {
   console.log('New client connected:', socket.id);
 
-  socket.on('join_room', ({roomId, playerName}) => {
-    if(!rooms.has(roomId)) {
-      rooms.set(roomId, {id: roomId, players: [], revealed: false, votes: []})
+  const getGenerated = () => {
+      const id = Math.floor(Math.random() * 1000).toString();
+      return id;
     }
 
-    const room = rooms.get(roomId);
+  const setUpRoom = (id, playerName) => {
+    const room = rooms.get(id);
     const playerId = uuid();
     const player = { id: playerId, name: playerName, vote: null, socketId: socket.id };
     room.players.push(player);
 
-    socket.join(roomId);
-    io.to(roomId).emit("update_room", room);
+    socket.join(id);
+    io.to(id).emit("update_room", room);
     socket.emit("player_id", playerId);
+  };
+
+  socket.on('create_room', ({name}) => {
+    const id = getGenerated();
+    rooms.set(id, {id: id, players: [], revealed: false, votes: []})
+    setUpRoom(id, name)
+  });
+
+  socket.on('join_room', ({id, name}) => {
+    if(!rooms.has(id)) {
+      socket.emit('error', 'No room with that ID exists');
+      return;
+    }
+    setUpRoom(id, name)
   });
 
   socket.on('vote', ({ roomId, playerId, vote}) => {
